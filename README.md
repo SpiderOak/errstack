@@ -25,22 +25,23 @@ func UseObject() {
 
 func FetchOject() (Object, error) {
 	if err := CreateObject(); err != nil  {
-		fmt.Errorf("FetchObject count not CreateObject: %s", err)
+		nil, fmt.Errorf("FetchObject count not CreateObject: %s", err)
 	}
 }
 
 func CreatObject() (Object, error) {
 	file, err := os.Open("invalid path"); err != nil {
-		return err
+		return nil, err
 	}
 }
 ```
 
-This idiom suffers from two drawbacks: 1) It's hard to maintain a
-consistennt format and 2) therre are cases where a calling function
-wants to examine the original error.
+This idiom suffers from two drawbacks: 
+    1) It's hard to maintain a consistent format 
+    2) therre are cases where a calling function wants to examine the original 
+       error.
 
-This is what errstack is for:
+That's is what errstack is for:
 
 ```go
 func UseObject() {
@@ -54,13 +55,13 @@ func UseObject() {
 
 func FetchOject() (Object, error) {
 	if err := CreateObject(); err != nil  {
-		return errstat.Push(err, "FetchObject")
+		return nil, errstack.Push(err, "FetchObject")
 	}
 }
 
 func CreatObject() (Object, error) {
 	if file, err := os.Open("invalid path"); err != nil {
-		return errstat.Push(err, "CreateObject")
+		return nil, errstack.Push(err, "CreateObject")
 	}
 }
 ```
