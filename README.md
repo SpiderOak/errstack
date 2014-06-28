@@ -65,3 +65,43 @@ func CreatObject() (Object, error) {
 	}
 }
 ```
+
+INSTALL
+=======
+go get github.com/dougfort/errstack
+
+```go
+import github.com/dougfort/errstack
+```
+
+FUNCTIONS
+=========
+
+```go
+// Push starts a new stack or appends message to the existing stack
+func Push(err error, message string) error
+
+// Pushf starts a new stack or appends a formatted message to the existing stack
+func Pushf(err error, format string, params ...[]string) error
+```
+
+TYPES
+=====
+
+```go
+// ErrStack represents a 'stack' of errors
+type ErrStack interface {
+    // implement the error interface
+    error
+
+    // Root returns the original error
+    Root() error
+
+    // Stack returns a slice of strings that are in the order of the call stack.
+    // The final string is the output of Error() from the root error
+    Stack() []string
+
+    // Join returns a string made by joining the
+    Join(sep string) string
+}
+```

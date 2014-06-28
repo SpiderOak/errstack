@@ -17,6 +17,7 @@ type errorStack struct {
 	Messages []string
 }
 
+// Push starts a new stack or appends message to the existing stack
 func Push(err error, message string) error {
 	var newStack errorStack
 
@@ -32,6 +33,7 @@ func Push(err error, message string) error {
 	return newStack
 }
 
+// Pushf starts a new stack or appends a formatted message to the existing stack
 func Pushf(err error, format string, params ...[]string) error {
 	message := fmt.Sprintf(format, params)
 	return Push(err, message)
