@@ -36,9 +36,9 @@ func CreatObject() (Object, error) {
 }
 ```
 
-This idiom suffers from two drawbacks: 
-    1) It's hard to maintain a consistent format 
-    2) therre are cases where a calling function wants to examine the original 
+This idiom suffers from two drawbacks:
+    1) It's hard to maintain a consistent format
+    2) there are cases where a calling function wants to examine the original
        error.
 
 That's is what errstack is for:
@@ -68,10 +68,10 @@ func CreatObject() (Object, error) {
 
 INSTALL
 =======
-go get github.com/dougfort/errstack
+go get github.com/SpiderOak/errstack
 
 ```go
-import github.com/dougfort/errstack
+import github.com/SpiderOak/errstack
 ```
 
 FUNCTIONS
@@ -83,6 +83,15 @@ func Push(err error, message string) error
 
 // Pushf starts a new stack or appends a formatted message to the existing stack
 func Pushf(err error, format string, params ...[]string) error
+
+// PushN starts a new stack or appends the name of the calling function to the
+// existing stack
+func PushN(err error) error
+
+// PushNf starts a new stack or appends the name of the calling function
+// concatenated with a formatted message to the existing stack
+func PushNf(err error, format string, params ...[]string) error
+
 ```
 
 TYPES

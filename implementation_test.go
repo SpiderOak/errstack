@@ -54,3 +54,28 @@ func TestRetrieveRoot(t *testing.T) {
 		t.Fatalf("unable to retrieve root %T", secondErrStack.Root())
 	}
 }
+
+func TestPushN(t *testing.T) {
+	var err error
+	var stack ErrStack
+	var ok bool
+
+	err = rootPlusTwo()
+	if stack, ok = err.(ErrStack); !ok {
+		t.Fatalf("unable to cast to errstack %T", err)
+	}
+
+	t.Log(stack.Join("\n"))
+}
+
+func root() error {
+	return fmt.Errorf("<root>")
+}
+
+func rootPlusOne() error {
+	return PushNf(root(), "what? %s %s", "a", "b")
+}
+
+func rootPlusTwo() error {
+	return PushN(rootPlusOne())
+}

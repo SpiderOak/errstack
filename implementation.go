@@ -2,6 +2,7 @@ package errstack
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 )
 
@@ -33,10 +34,25 @@ func Push(err error, message string) error {
 	return newStack
 }
 
+// PushN starts a new stack or appends the name of the calling function to the
+// existing stack
+func PushN(err error) error {
+	return Push(err, functionName(2))
+}
+
 // Pushf starts a new stack or appends a formatted message to the existing stack
-func Pushf(err error, format string, params ...[]string) error {
-	message := fmt.Sprintf(format, params)
+func Pushf(err error, format string, params ...interface{}) error {
+	message := fmt.Sprintf(format, params...)
 	return Push(err, message)
+}
+
+// PushNf starts a new stack or appends the name of the calling function
+// concatenated with a formatted message to the existing stack
+func PushNf(err error, format string, params ...interface{}) error {
+	return Push(
+		err,
+		fmt.Sprintf("%s: %s", functionName(2), fmt.Sprintf(format, params...)),
+	)
 }
 
 // Error implements the 'error' interface by Joining the stack using the
@@ -71,4 +87,20 @@ func (stack errorStack) Stack() []string {
 // separator
 func (stack errorStack) Join(sep string) string {
 	return strings.Join(stack.Stack(), sep)
+}
+
+func functionName(skipCount int) string {
+	var pc uintptr
+	var ok bool
+	var funcPtr *runtime.Func
+
+	if pc, _, _, ok = runtime.Caller(skipCount); !ok {
+		return "* !ok *"
+	}
+
+	if funcPtr = runtime.FuncForPC(pc); funcPtr == nil {
+		return "* nil *"
+	}
+
+	return funcPtr.Name()
 }
